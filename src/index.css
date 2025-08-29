@@ -8,30 +8,30 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 219 64% 96%;  /* Alice Blue #edf2fb */
-    --foreground: 222 50% 25%;
+    --background: 210 45% 98%;
+    --foreground: 210 25% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 50% 25%;
+    --card-foreground: 210 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 50% 25%;
+    --popover-foreground: 210 25% 15%;
 
-    /* Blue gradient primary system */
-    --primary: 222 100% 84%;  /* Jordy Blue #abc4ff */
+    /* Medical blue primary system */
+    --primary: 198 87% 35%;  /* #0077b6 */
     --primary-foreground: 0 0% 100%;
-    --primary-light: 222 97% 88%;  /* Periwinkle 2 #c1d3fe */
-    --primary-dark: 222 100% 80%;
+    --primary-light: 191 93% 48%;  /* #00b4d8 */
+    --primary-dark: 198 95% 25%;
 
-    /* Blue theme secondary colors */
-    --secondary: 222 81% 94%;  /* Lavender web #e2eafc */
-    --secondary-foreground: 222 50% 25%;
+    /* Healthcare secondary colors */
+    --secondary: 210 45% 96%;
+    --secondary-foreground: 210 25% 15%;
 
-    --muted: 221 86% 92%;  /* Lavender web 2 #d7e3fc */
-    --muted-foreground: 222 30% 45%;
+    --muted: 210 40% 94%;
+    --muted-foreground: 210 15% 45%;
 
-    --accent: 222 92% 90%;  /* Periwinkle #ccdbfd */
-    --accent-foreground: 222 50% 25%;
+    --accent: 191 93% 48%;  /* Light blue accent */
+    --accent-foreground: 0 0% 100%;
 
     /* Medical status colors */
     --destructive: 0 85% 55%;  /* Critical/Emergency red */
@@ -41,12 +41,12 @@ All colors MUST be HSL.
     --success-foreground: 0 0% 100%;
     
     --warning: 45 93% 47%;   /* Moderate yellow */
-    --warning-foreground: 222 50% 25%;
+    --warning-foreground: 210 25% 15%;
 
     /* Interface elements */
-    --border: 222 50% 88%;
-    --input: 221 86% 92%;
-    --ring: 222 100% 84%;
+    --border: 210 25% 88%;
+    --input: 210 25% 92%;
+    --ring: 198 87% 35%;
 
     --radius: 0.5rem;
 
@@ -116,7 +116,7 @@ All colors MUST be HSL.
   }
 }
 
-/* Blue gradient utilities and special effects */
+/* Medical gradients and special effects */
 @layer utilities {
   .gradient-medical {
     background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
