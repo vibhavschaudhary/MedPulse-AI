@@ -8,30 +8,30 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 100% 85%;  /* #B8B8FF */
-    --foreground: 248 100% 25%;
+    --background: 219 64% 96%;  /* Alice Blue #edf2fb */
+    --foreground: 222 50% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 248 100% 25%;
+    --card-foreground: 222 50% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 248 100% 25%;
+    --popover-foreground: 222 50% 25%;
 
-    /* Purple theme primary system */
-    --primary: 248 100% 75%;  /* #9381FF */
+    /* Blue gradient primary system */
+    --primary: 222 100% 84%;  /* Jordy Blue #abc4ff */
     --primary-foreground: 0 0% 100%;
-    --primary-light: 240 100% 85%;  /* #B8B8FF */
-    --primary-dark: 248 100% 65%;
+    --primary-light: 222 97% 88%;  /* Periwinkle 2 #c1d3fe */
+    --primary-dark: 222 100% 80%;
 
-    /* Purple theme secondary colors */
-    --secondary: 245 100% 98%;  /* #F8F7FF */
-    --secondary-foreground: 248 100% 25%;
+    /* Blue theme secondary colors */
+    --secondary: 222 81% 94%;  /* Lavender web #e2eafc */
+    --secondary-foreground: 222 50% 25%;
 
-    --muted: 245 100% 96%;
-    --muted-foreground: 248 30% 45%;
+    --muted: 221 86% 92%;  /* Lavender web 2 #d7e3fc */
+    --muted-foreground: 222 30% 45%;
 
-    --accent: 25 100% 87%;  /* #FFD8BE */
-    --accent-foreground: 248 100% 25%;
+    --accent: 222 92% 90%;  /* Periwinkle #ccdbfd */
+    --accent-foreground: 222 50% 25%;
 
     /* Medical status colors */
     --destructive: 0 85% 55%;  /* Critical/Emergency red */
@@ -44,9 +44,9 @@ All colors MUST be HSL.
     --warning-foreground: 210 25% 15%;
 
     /* Interface elements */
-    --border: 248 50% 90%;
-    --input: 245 100% 96%;
-    --ring: 248 100% 75%;
+    --border: 222 50% 88%;
+    --input: 221 86% 92%;
+    --ring: 222 100% 84%;
 
     --radius: 0.5rem;
 
