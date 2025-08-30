@@ -14,7 +14,122 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      patients: {
+        Row: {
+          age: number
+          checked_in_at: string
+          created_at: string
+          estimated_wait_time: number
+          id: string
+          name: string
+          queue_position: number
+          severity_score: number
+          status: string
+          symptoms: string
+          updated_at: string
+          vitals: string | null
+        }
+        Insert: {
+          age: number
+          checked_in_at?: string
+          created_at?: string
+          estimated_wait_time: number
+          id?: string
+          name: string
+          queue_position: number
+          severity_score: number
+          status?: string
+          symptoms: string
+          updated_at?: string
+          vitals?: string | null
+        }
+        Update: {
+          age?: number
+          checked_in_at?: string
+          created_at?: string
+          estimated_wait_time?: number
+          id?: string
+          name?: string
+          queue_position?: number
+          severity_score?: number
+          status?: string
+          symptoms?: string
+          updated_at?: string
+          vitals?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          department: string | null
+          display_name: string | null
+          id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          display_name?: string | null
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          display_name?: string | null
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      queue_history: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          new_position: number | null
+          notes: string | null
+          old_position: number | null
+          patient_id: string | null
+          performed_by: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          new_position?: number | null
+          notes?: string | null
+          old_position?: number | null
+          patient_id?: string | null
+          performed_by?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          new_position?: number | null
+          notes?: string | null
+          old_position?: number | null
+          patient_id?: string | null
+          performed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "queue_history_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
