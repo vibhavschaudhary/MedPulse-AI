@@ -11,14 +11,16 @@ import {
   Heart,
   TrendingUp
 } from "lucide-react";
-import { mockPatients, getSeverityColor, getSeverityLabel } from "@/data/mockData";
+import { usePatients } from "@/hooks/usePatients";
+import { getSeverityColor, getSeverityLabel } from "@/data/mockData";
 
 const Queue = () => {
+  const { patients, loading, fetchPatients } = usePatients();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
   
-  // Simulate current patient (could be from props or context in real app)
-  const currentPatient = mockPatients[2]; // Emma Rodriguez
+  // Use the first patient as the current patient for demo (in real app, this would be based on user session)
+  const currentPatient = patients[0]; // First patient in queue
   
   useEffect(() => {
     const timer = setInterval(() => {
@@ -30,8 +32,7 @@ const Queue = () => {
   
   const handleRefresh = async () => {
     setRefreshing(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await fetchPatients();
     setRefreshing(false);
   };
   
@@ -42,6 +43,17 @@ const Queue = () => {
   const getWaitProgress = (position: number) => {
     return Math.max(0, 100 - (position * 20));
   };
+
+  if (loading || !currentPatient) {
+    return (
+      <div className="min-h-screen bg-background py-8 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading queue information...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background py-8">
@@ -82,10 +94,10 @@ const Queue = () => {
           <CardContent>
             <div className="text-center mb-6">
               <div className="text-5xl font-bold text-primary mb-2">
-                #{currentPatient.queuePosition}
+                #{currentPatient.queue_position}
               </div>
               <p className="text-lg text-muted-foreground">
-                You are <span className="font-semibold text-foreground">3rd</span> in line
+                You are <span className="font-semibold text-foreground">{currentPatient.queue_position === 1 ? '1st' : `${currentPatient.queue_position}${currentPatient.queue_position === 2 ? 'nd' : currentPatient.queue_position === 3 ? 'rd' : 'th'}`}</span> in line
               </p>
             </div>
             
@@ -93,7 +105,7 @@ const Queue = () => {
               <Card className="text-center p-4">
                 <Clock className="h-8 w-8 text-primary mx-auto mb-2" />
                 <div className="text-2xl font-semibold text-foreground">
-                  {currentPatient.estimatedWaitTime}
+                  {currentPatient.estimated_wait_time}
                 </div>
                 <div className="text-sm text-muted-foreground">Minutes Remaining</div>
               </Card>
@@ -101,10 +113,10 @@ const Queue = () => {
               <Card className="text-center p-4">
                 <Activity className="h-8 w-8 text-primary mx-auto mb-2" />
                 <Badge 
-                  variant={getSeverityColor(currentPatient.severityScore) as any}
+                  variant={getSeverityColor(currentPatient.severity_score) as any}
                   className="text-sm mb-2"
                 >
-                  {getSeverityLabel(currentPatient.severityScore)}
+                  {getSeverityLabel(currentPatient.severity_score)}
                 </Badge>
                 <div className="text-sm text-muted-foreground">Priority Level</div>
               </Card>
@@ -112,7 +124,7 @@ const Queue = () => {
               <Card className="text-center p-4">
                 <TrendingUp className="h-8 w-8 text-primary mx-auto mb-2" />
                 <div className="text-2xl font-semibold text-foreground">
-                  {currentPatient.severityScore}
+                  {currentPatient.severity_score}
                 </div>
                 <div className="text-sm text-muted-foreground">Severity Score</div>
               </Card>
@@ -121,9 +133,9 @@ const Queue = () => {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Progress to Treatment</span>
-                <span>{getWaitProgress(currentPatient.queuePosition)}%</span>
+                <span>{getWaitProgress(currentPatient.queue_position)}%</span>
               </div>
-              <Progress value={getWaitProgress(currentPatient.queuePosition)} className="h-3" />
+              <Progress value={getWaitProgress(currentPatient.queue_position)} className="h-3" />
             </div>
           </CardContent>
         </Card>
@@ -137,13 +149,13 @@ const Queue = () => {
                 <span>Current Queue</span>
               </span>
               <Badge variant="secondary" className="text-sm">
-                {mockPatients.length} patients waiting
+                {patients.length} patients waiting
               </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {mockPatients.slice(0, 6).map((patient, index) => (
+              {patients.slice(0, 6).map((patient, index) => (
                 <div 
                   key={patient.id}
                   className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
@@ -161,20 +173,20 @@ const Queue = () => {
                         {patient.id === currentPatient.id ? 'You' : `Patient ${index + 1}`}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        Age: {patient.age} • Checked in: {new Date(patient.checkedInAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        Age: {patient.age} • Checked in: {new Date(patient.checked_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-3">
                     <Badge 
-                      variant={getSeverityColor(patient.severityScore) as any}
+                      variant={getSeverityColor(patient.severity_score) as any}
                       className="text-xs"
                     >
-                      {getSeverityLabel(patient.severityScore)}
+                      {getSeverityLabel(patient.severity_score)}
                     </Badge>
                     <div className="text-sm text-muted-foreground">
-                      ~{patient.estimatedWaitTime}m
+                      ~{patient.estimated_wait_time}m
                     </div>
                   </div>
                 </div>

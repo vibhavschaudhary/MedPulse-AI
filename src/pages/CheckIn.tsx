@@ -15,6 +15,7 @@ import {
   Heart
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { usePatients } from "@/hooks/usePatients";
 import { getSeverityColor, getSeverityLabel } from "@/data/mockData";
 
 interface CheckInResult {
@@ -26,6 +27,7 @@ interface CheckInResult {
 
 const CheckIn = () => {
   const { toast } = useToast();
+  const { checkInPatient } = usePatients();
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -79,35 +81,31 @@ const CheckIn = () => {
 
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const age = parseInt(formData.age);
-    const severityScore = calculateSeverityScore(formData.symptoms, age);
-    const queueNumber = Math.floor(Math.random() * 1000) + 100;
-    
-    // Calculate position based on severity (higher severity = higher priority)
-    let position = 1;
-    if (severityScore < 60) position = Math.floor(Math.random() * 8) + 4;
-    else if (severityScore < 80) position = Math.floor(Math.random() * 3) + 2;
-    
-    const estimatedWaitTime = position * 15 + Math.floor(Math.random() * 10);
-    
-    const result: CheckInResult = {
-      queueNumber,
-      estimatedWaitTime,
-      severityScore,
-      position
-    };
-    
-    setCheckInResult(result);
-    setIsSubmitting(false);
-    
-    toast({
-      title: "Check-in Successful",
-      description: `You're number ${queueNumber} in the queue. Estimated wait: ${estimatedWaitTime} minutes.`,
-      variant: "default"
-    });
+    try {
+      const age = parseInt(formData.age);
+      const result = await checkInPatient({
+        name: formData.name,
+        age,
+        symptoms: formData.symptoms,
+        vitals: formData.vitals || undefined
+      });
+
+      if (result?.success) {
+        const patient = result.patient;
+        const checkInData: CheckInResult = {
+          queueNumber: parseInt(result.queueNumber, 16), // Convert hex to number for display
+          estimatedWaitTime: patient.estimated_wait_time,
+          severityScore: patient.severity_score,
+          position: patient.queue_position
+        };
+        
+        setCheckInResult(checkInData);
+      }
+    } catch (error) {
+      console.error('Check-in failed:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {

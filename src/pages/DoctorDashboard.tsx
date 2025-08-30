@@ -20,32 +20,34 @@ import {
   AlertTriangle,
   Filter
 } from "lucide-react";
-import { mockPatients, getSeverityColor, getSeverityLabel, Patient } from "@/data/mockData";
+import { usePatients, Patient } from "@/hooks/usePatients";
+import { getSeverityColor, getSeverityLabel } from "@/data/mockData";
 
 const DoctorDashboard = () => {
+  const { patients, loading, updatePatientStatus } = usePatients();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<'severity' | 'time' | 'age'>('severity');
   const [filterSeverity, setFilterSeverity] = useState<'all' | 'critical' | 'moderate' | 'mild'>('all');
   
   // Filter and sort patients
-  const filteredAndSortedPatients = mockPatients
+  const filteredAndSortedPatients = patients
     .filter(patient => {
       const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            patient.symptoms.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesSeverity = filterSeverity === 'all' || 
-                             (filterSeverity === 'critical' && patient.severityScore >= 80) ||
-                             (filterSeverity === 'moderate' && patient.severityScore >= 60 && patient.severityScore < 80) ||
-                             (filterSeverity === 'mild' && patient.severityScore < 60);
+                             (filterSeverity === 'critical' && patient.severity_score >= 80) ||
+                             (filterSeverity === 'moderate' && patient.severity_score >= 60 && patient.severity_score < 80) ||
+                             (filterSeverity === 'mild' && patient.severity_score < 60);
       
       return matchesSearch && matchesSeverity;
     })
     .sort((a, b) => {
       switch (sortBy) {
         case 'severity':
-          return b.severityScore - a.severityScore;
+          return b.severity_score - a.severity_score;
         case 'time':
-          return new Date(a.checkedInAt).getTime() - new Date(b.checkedInAt).getTime();
+          return new Date(a.checked_in_at).getTime() - new Date(b.checked_in_at).getTime();
         case 'age':
           return b.age - a.age;
         default:
@@ -53,9 +55,9 @@ const DoctorDashboard = () => {
       }
     });
   
-  const criticalCount = mockPatients.filter(p => p.severityScore >= 80).length;
-  const moderateCount = mockPatients.filter(p => p.severityScore >= 60 && p.severityScore < 80).length;
-  const mildCount = mockPatients.filter(p => p.severityScore < 60).length;
+  const criticalCount = patients.filter(p => p.severity_score >= 80).length;
+  const moderateCount = patients.filter(p => p.severity_score >= 60 && p.severity_score < 80).length;
+  const mildCount = patients.filter(p => p.severity_score < 60).length;
   
   const formatTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -68,6 +70,21 @@ const DoctorDashboard = () => {
     const diffHours = Math.floor(diffMins / 60);
     return `${diffHours}h ${diffMins % 60}m ago`;
   };
+
+  const handleSeePatient = async (patientId: string) => {
+    await updatePatientStatus(patientId, 'in-progress');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background py-8 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading patient data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background py-8">
@@ -95,7 +112,7 @@ const DoctorDashboard = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">Total Patients</p>
-                    <p className="text-2xl font-bold text-foreground">{mockPatients.length}</p>
+                    <p className="text-2xl font-bold text-foreground">{patients.length}</p>
                   </div>
                   <Users className="h-8 w-8 text-primary" />
                 </div>
@@ -222,7 +239,7 @@ const DoctorDashboard = () => {
                       <TableCell>
                         <div className="flex items-center">
                           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium">
-                            {patient.queuePosition}
+                            {patient.queue_position}
                           </div>
                         </div>
                       </TableCell>
@@ -250,31 +267,35 @@ const DoctorDashboard = () => {
                       
                       <TableCell>
                         <div className="flex items-center space-x-2">
-                          <Badge variant={getSeverityColor(patient.severityScore) as any}>
-                            {getSeverityLabel(patient.severityScore)}
+                          <Badge variant={getSeverityColor(patient.severity_score) as any}>
+                            {getSeverityLabel(patient.severity_score)}
                           </Badge>
                           <span className="text-sm text-muted-foreground">
-                            {patient.severityScore}
+                            {patient.severity_score}
                           </span>
                         </div>
                       </TableCell>
                       
                       <TableCell>
                         <div className="text-sm">
-                          <div className="text-foreground">{formatTime(patient.checkedInAt)}</div>
-                          <div className="text-muted-foreground">{getTimeSinceCheckin(patient.checkedInAt)}</div>
+                          <div className="text-foreground">{formatTime(patient.checked_in_at)}</div>
+                          <div className="text-muted-foreground">{getTimeSinceCheckin(patient.checked_in_at)}</div>
                         </div>
                       </TableCell>
                       
                       <TableCell>
                         <div className="text-sm text-foreground">
-                          ~{patient.estimatedWaitTime}m
+                          ~{patient.estimated_wait_time}m
                         </div>
                       </TableCell>
                       
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button size="sm" variant="medical">
+                          <Button 
+                            size="sm" 
+                            variant="medical"
+                            onClick={() => handleSeePatient(patient.id)}
+                          >
                             See Now
                           </Button>
                           <Button size="sm" variant="outline">
